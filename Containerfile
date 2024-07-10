@@ -1,5 +1,6 @@
 # Use the official Python image from the Docker Hub
-FROM registry.access.redhat.com/ubi8/python-311
+# FROM --platform=linux/ppc64le registry.access.redhat.com/ubi9/python-311
+FROM registry.access.redhat.com/ubi9/python-311
 
 # Set the working directory in the container
 WORKDIR /app
@@ -8,7 +9,7 @@ WORKDIR /app
 COPY . /app
 
 # Install Flask
-RUN pip install Flask
+RUN pip install Flask requests
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
