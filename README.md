@@ -1,36 +1,12 @@
-## General Commands
-#### Test on laptop
-```sh
-python3 app.py   
-
-uname -m
-
-http://127.0.0.1:5000/architecture
-```
-## Podman Build
-```sh
-# --arch=arch
-# Set the architecture of the image to be built, and that of the base image to be pulled, if the build uses one, to the provided value instead of using the architecture of the build host. Unless overridden, subsequent lookups of the same image in the local storage matches this architecture, regardless of the host. (Examples: arm, arm64, 386, amd64, ppc64le, s390x)
-
-# x86 (default)
-podman build -t demo-multiarch-x86 -f Containerfile .
-podman run -d -p 5000:5000 --name demo-multiarch-container-x86 demo-multiarch-x86
-
-# arm64
-podman build -t demo-multiarch-arm64 -f Containerfile . --arch=arm64  
-podman run -d -p 5001:5000 --name demo-multiarch-container-arm64 demo-multiarch-arm64
-
-# Z
-podman build -t demo-multiarch-s390x -f Containerfile . --arch=s390x  
-podman run -d -p 5002:5000 --name demo-multiarch-run-s390x demo-multiarch-s390x
-
-# PPC
-podman build -t demo-multiarch-ppc64le -f Containerfile . --arch=ppc64le  
-podman run -d -p 5003:5000 --name demo-multiarch-run-ppc64le demo-multiarch-ppc64le
-
-```
 # Setup GitLab Runner on OpenShift
-Instructions [here](https://developer.ibm.com/tutorials/build-multi-architecture-x86-and-power-container-images-using-gitlab/#step-7-a-peek-at-the-gitlab-ci-pipeline-yaml-file-10) 
+### Inspiration for demo
+The CI pipeline gets triggered whenever a change is made to the pipeline itself and/or application code. This pipeline trigger will cause the OpenShift cluster to build the HW architecture-specific container image(s)—x86 image and ppc64le image in our case—and push them to the container registry (Quay.io in this case). Eventually, the pipeline will combine the different (HW-specific) container images and create a multi-architecture (single) image which can be used across x86 and ppc64le OpenShift clusters. This saves the developers and operations team from dealing with multiple container images for an application.
+
+Detailed Instructions [here](https://developer.ibm.com/tutorials/build-multi-architecture-x86-and-power-container-images-using-gitlab/#step-7-a-peek-at-the-gitlab-ci-pipeline-yaml-file-10) 
+
+Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU architectures.
+![alt text](images/0-image.png)
+
 
 ### Install operator
 ```sh
@@ -165,4 +141,38 @@ oc expose service/demo-multiarch
 ### Delete application
 ```sh
 oc delete all --selector app=demo-multiarch
+```
+# Thank You
+The End
+
+
+### To Test locally on laptop
+```sh
+python3 app.py   
+
+uname -m
+
+http://127.0.0.1:5000/architecture
+```
+#### Podman Build
+```sh
+# --arch=arch
+# Set the architecture of the image to be built, and that of the base image to be pulled, if the build uses one, to the provided value instead of using the architecture of the build host. Unless overridden, subsequent lookups of the same image in the local storage matches this architecture, regardless of the host. (Examples: arm, arm64, 386, amd64, ppc64le, s390x)
+
+# x86 (default)
+podman build -t demo-multiarch-x86 -f Containerfile .
+podman run -d -p 5000:5000 --name demo-multiarch-container-x86 demo-multiarch-x86
+
+# arm64
+podman build -t demo-multiarch-arm64 -f Containerfile . --arch=arm64  
+podman run -d -p 5001:5000 --name demo-multiarch-container-arm64 demo-multiarch-arm64
+
+# Z
+podman build -t demo-multiarch-s390x -f Containerfile . --arch=s390x  
+podman run -d -p 5002:5000 --name demo-multiarch-run-s390x demo-multiarch-s390x
+
+# PPC
+podman build -t demo-multiarch-ppc64le -f Containerfile . --arch=ppc64le  
+podman run -d -p 5003:5000 --name demo-multiarch-run-ppc64le demo-multiarch-ppc64le
+
 ```
