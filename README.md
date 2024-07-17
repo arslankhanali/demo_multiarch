@@ -155,3 +155,14 @@ create 2 variable
 
 ### Run pipeline
 ![alt text](images/5-image-runpipeline.png)
+
+### Deploy Application
+``` sh
+oc new-app quay.io/arslankhanali/demo-multiarch:tag-demo-multiarch-multiarch
+oc expose service/demo-multiarch
+```
+
+### Delete application
+```sh
+oc delete all --selector app=demo-multiarch
+```
