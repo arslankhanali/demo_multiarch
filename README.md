@@ -5,10 +5,11 @@ The CI pipeline gets triggered whenever a change is made to the pipeline itself 
 Detailed Instructions [here](https://developer.ibm.com/tutorials/build-multi-architecture-x86-and-power-container-images-using-gitlab/#step-7-a-peek-at-the-gitlab-ci-pipeline-yaml-file-10) 
 
 Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU architectures.
-![alt text](images/0-image.png)
+![alt text](images/0-image-hld.png)
 
 
 ### Install operator
+Most of these steps will be similar on different OpenShift clusters. Except `create Runner` part where you will have to provide the correct tag.  
 ```sh
 cat << EOF | oc apply -f-
 apiVersion: operators.coreos.com/v1alpha1
@@ -38,9 +39,10 @@ EOF
 ```
 
 ### Create Secret
-> echo -n 'token' | base64
 ![alt text](images/1-image-get-token.png)
-
+  
+> To convert token to base64 and edit below  
+>  `echo -n 'GL127690123602193703217' | base64`
 ``` sh
 cat << EOF | oc apply -f-
 kind: Secret
@@ -49,7 +51,7 @@ metadata:
   name: gitlab-runner-secret
   namespace: demo
 data:
-  runner-registration-token: R1IxMzQ4OTQxUlJCVEV6U3l6WE5uV3VmeHJQeGk=
+  runner-registration-token: R1IxMzQ4OTQxUlJCVEV6U3l6WE5uV3VmeHJQeGk= # replace with yours
 type: Opaque
 EOF
 ```
@@ -65,7 +67,17 @@ metadata:
 EOF
 ```
 
-### Create Runner
+### Create Runner (Will be different to each cluster)
+Use the correct `tag` as per your arch and then reference it in `.gitlab-ci.yml` file.  
+Examples:  
+`tags: openshift, x86` (as used in our case below)  
+or  
+`tags: openshift, s390x`  
+or  
+`tags: openshift, ppc64le`  
+or  
+`tags: openshift, arm`  
+
 ``` sh
 cat << EOF | oc apply -f-
 apiVersion: apps.gitlab.com/v1beta2
@@ -124,7 +136,7 @@ create 2 variable
 1. quay_user
 2. quay_passwd
 
-`.gitlab-ci.yml` will reference these when pushing images to quay
+`.gitlab-ci.yml` will reference these when pushing images to quay.
 ![alt text](images/3-image-quay-variable.png)
 ![alt text](images/4-image-variables.png)
 
@@ -132,8 +144,14 @@ create 2 variable
 ### Run pipeline
 ![alt text](images/5-image-runpipeline.png)
 
+### Verify
+![alt text](images/6-image-jobs.png)
+
+![alt text](images/7-image-images.png)
+
 ### Deploy Application
 ``` sh
+oc project demo
 oc new-app quay.io/arslankhanali/demo-multiarch:tag-demo-multiarch-multiarch
 oc expose service/demo-multiarch
 ```
