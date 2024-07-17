@@ -68,12 +68,12 @@ def index():
         </style>
     </head>
     <body>
-        <h1>System Architecture</h1>
+        <h1>Demo App: System Architecture</h1>
         <p>The architecture of this system is: <strong>{{ architecture }}</strong></p>
         <table>
             <tr>
                 <th>Architecture</th>
-                <th>Color</th>
+                <th>Background Color</th>
             </tr>
             <tr>
                 <td>x86</td>
@@ -105,14 +105,14 @@ def index():
             <p><strong>Processor:</strong> {{ processor }}</p>
             <p><strong>Python Version:</strong> {{ python_version }}</p>
         </div>
+        <h2>Other Container's Architecture</h2>
         <form method="get" action="/">
             <label for="endpoint">Other Container Endpoint:</label>
-            <input type="text" id="endpoint" name="endpoint">
+            <input type="text" id="endpoint" name="endpoint" value="http://127.0.0.1:5000/architecture">
             <button type="submit">Check</button>
         </form>
         {% if other_arch %}
         <div class="stats">
-            <h2>Other Container's Architecture</h2>
             <p>The architecture of the other container is: <strong>{{ other_arch }}</strong></p>
         </div>
         {% endif %}
@@ -141,4 +141,4 @@ def architecture():
     return jsonify({'architecture': user_friendly_arch})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port='5000')

@@ -7,6 +7,7 @@ uname -m
 http://127.0.0.1:5000/architecture
 http://127.0.0.1:5002/architecture
 http://mac-run-s390x:5002/architecture
+http://mac-run-s390x:5000/architecture
 ```
 ## Podman Build
 ```sh
