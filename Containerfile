@@ -1,4 +1,5 @@
-#FROM --platform=linux/arm registry.access.redhat.com/ubi9/python-311
+
+#FROM --platform=linux/arm registry.access.redhat.com/ubi9/python-312
 FROM registry.access.redhat.com/ubi9/python-312
 
 # Set the working directory in the container
