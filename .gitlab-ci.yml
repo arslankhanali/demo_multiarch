@@ -40,7 +40,7 @@ ppc64le-build:
   script:
     
     - echo "Building container on ppc64le"
-    - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache --arch=ppc64le  
+    - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache 
     - echo "Build complete."
 
     - echo "Listing podman images"

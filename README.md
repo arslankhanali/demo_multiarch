@@ -62,8 +62,9 @@ EOF
 ```
 
 ### Create Secret
+> echo -n 'token' | base64
 ![alt text](images/1-image-get-token.png)
-echo -n 'token' | base64
+
 ``` sh
 cat << EOF | oc apply -f-
 kind: Secret
@@ -105,7 +106,7 @@ spec:
 EOF
 ```
 
-### Create Rolebinding
+### Create Rolebindings
 ``` sh
 cat << EOF | oc apply -f-
 kind: RoleBinding
