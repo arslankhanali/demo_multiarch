@@ -132,7 +132,7 @@ EOF
 ![alt text](images/2-image-robot-account.png)
 
 ### Create variables in GitLab to access Quay using robot account
-create 2 variable
+Create 2 variables  
 1. quay_user
 2. quay_passwd
 
@@ -140,7 +140,7 @@ create 2 variable
 ![alt text](images/3-image-quay-variable.png)
 ![alt text](images/4-image-variables.png)
 
-
+> APIs can be used to create these variables as well.
 ### Run pipeline
 ![alt text](images/5-image-runpipeline.png)
 

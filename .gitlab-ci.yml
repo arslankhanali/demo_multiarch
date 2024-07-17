@@ -64,4 +64,3 @@ multiarch-manifest:
     - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-ppc64le
     - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-x86
     - podman manifest push --creds $quay_user:$quay_passwd mylist ${IMAGE_REGISTRY}:${TAG}-multiarch
-
