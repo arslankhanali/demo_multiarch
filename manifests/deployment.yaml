@@ -17,5 +17,6 @@ spec:
       containers:
         - name: demo-multiarch-container
           image: quay.io/arslankhanali/demo-multiarch:tag-demo-multiarch-multiarch
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000  # Expose your application on port 5000
