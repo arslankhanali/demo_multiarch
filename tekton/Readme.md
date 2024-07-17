@@ -47,6 +47,9 @@ oc apply -f tekton/pipeline.yaml
 ![alt text](../images/9-image-pipeline.png)
 
 ### Run Pipeline
+```sh
+oc apply -f tekton/pipelinerun.yaml
+```
 ![alt text](../images/10-image-run.png)
 
 ### Verify

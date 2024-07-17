@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    chains.tekton.dev/signed: "true"
+    pipeline.openshift.io/started-by: admin
+  labels:
+    app: demo-multiarch
+    tekton.dev/pipeline: build-demoapp
+  name: build-demoapp
+  namespace: demo
+spec:
+  pipelineRef:
+    name: build-demoapp
+  taskRunTemplate:
+    serviceAccountName: pipeline
+  workspaces:
+  - name: workspace
+    persistentVolumeClaim:
+      claimName: pvc

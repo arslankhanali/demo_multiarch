@@ -29,18 +29,17 @@ podman run -d -p 5003:5000 --name demo-multiarch-run-ppc64le demo-multiarch-ppc6
 
 ```
 
-
-
 # Push to both Gitlab and Github
 ``` sh
-╰─ git remote show                                                                                                                           ─╯
-github # github
-origin # gitlab (is default)
+git remote                                                                                                                          
+> github # github
+> origin # gitlab 
 
-# Gitlab push
-git push
+# Git LAB
+git remote add origin https://gitlab.com/arslankhanali/demo_multiarch.git
+git push -u origin main
 
-# Github push
+# Git HUB
 git remote add github https://github.com/arslankhanali/demo_multiarch.git
 git push -u github main
 ```
