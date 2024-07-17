@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: demo-multiarch-route
+  labels:
+    app: demo-multiarch  # Add label to match selector
+spec:
+  to:
+    kind: Service
+    name: demo-multiarch-service
+  port:
+    targetPort: 5000  # Expose your application on port 5000
+  tls:
+    termination: edge  # Edge termination for TLS
+  wildcards:
+    - allowed: true  # Allow wildcard routes for flexibility

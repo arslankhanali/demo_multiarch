@@ -151,9 +151,13 @@ Create 2 variables
 
 ### Deploy Application
 ``` sh
+# Deploy using CLI
 oc project demo
 oc new-app quay.io/arslankhanali/demo-multiarch:tag-demo-multiarch-multiarch
-oc expose service/demo-multiarch
+oc create route edge demo-multiarch --service=demo-multiarch --port=5000
+
+# Deploy using GitOps 
+oc apply -f manifests  
 ```
 
 ### Delete application
