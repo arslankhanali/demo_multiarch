@@ -25,13 +25,13 @@ oc apply -f argo/argo_instance.yaml
 
 ### Give Argo Service Account Access to `demo` namespace
 ```sh
-#Via CLI
+# via CLI
 oc create rolebinding argocd-admin-binding \
   --clusterrole=admin \
   --serviceaccount=openshift-gitops:openshift-gitops-argocd-application-controller \
   --namespace=demo
 
-# Via Yaml
+# via Yaml
 cat << EOF | oc apply -f-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -47,6 +47,9 @@ subjects:
   name: openshift-gitops-argocd-application-controller
   namespace: openshift-gitops
 EOF
+
+# Verify
+oc get rolebinding argocd-admin-binding -n demo
 ```
 
 ### Create Application

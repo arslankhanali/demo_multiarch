@@ -12,5 +12,3 @@ spec:
     targetPort: 5000  # Expose your application on port 5000
   tls:
     termination: edge  # Edge termination for TLS
-  # wildcards:
-  #   - allowed: true  # Allow wildcard routes for flexibility
