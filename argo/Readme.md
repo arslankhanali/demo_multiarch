@@ -53,3 +53,8 @@ EOF
 ```sh
 oc apply -f argo/application.yaml
 ```
+
+### Delete Application
+```sh
+oc delete -f argo/application.yaml
+```
