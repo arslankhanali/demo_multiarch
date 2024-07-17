@@ -68,7 +68,7 @@ def index():
         </style>
     </head>
     <body>
-        <h1>Demo App: System Architecture - F1</h1>
+        <h1>Demo App: System Architecture</h1>
         <p>The architecture of this system is: <strong>{{ architecture }}</strong></p>
         <table>
             <tr>
