@@ -57,6 +57,12 @@ oc get rolebinding argocd-admin-binding -n demo
 oc apply -f argo/application.yaml
 ```
 
+### Application update
+Argo will only update to a new container image if it detects a change in any manifests.
+Solution:
+1. Automate Tag Update: Use unique tags for each build to ensure Argo CD detects changes.
+2. or Manual Update: Add or update an annotation in your deployment manifest to force a redeploy.
+
 ### Delete Application
 ```sh
 oc delete -f argo/application.yaml
