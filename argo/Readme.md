@@ -63,6 +63,12 @@ Solution:
 1. Automate Tag Update: Use unique tags for each build to ensure Argo CD detects changes.
 2. or Manual Update: Add or update an annotation in your deployment manifest to force a redeploy.
 
+### Get password for Argo UI
+``` sh
+# username in admin
+oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 --decode  
+```
+
 ### Delete Application
 ```sh
 oc delete -f argo/application.yaml

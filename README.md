@@ -43,6 +43,7 @@ EOF
   
 > To convert token to base64 and edit below  
 >  `echo -n '<GL127690123602193703217>' | base64`
+
 ``` sh
 cat << EOF | oc apply -f-
 kind: Secret
@@ -51,7 +52,7 @@ metadata:
   name: gitlab-runner-secret
   namespace: demo
 data:
-  runner-registration-token: <R1IxMzQ4OTQxUlJCVEV6U3l6WE5uV3VmeHJQeGk=> #REPLACE WITH YOURS
+  runner-registration-token: R1IxMzQ4OTQxY14ZXNrTUI0ek5QbW0=
 type: Opaque
 EOF
 ```

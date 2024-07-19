@@ -9,32 +9,31 @@ variables:
   APP: app-demo-multiarch
 
 
-x86-build:
-  stage: container-build
-  tags:
-    - openshift
-    - x86
-  image:
-    name: quay.io/dpkshetty/podman:gitlab_multi
-  script:
+# x86-build:
+#   stage: container-build
+#   tags:
+#     - openshift
+#     - x86
+#   image:
+#     name: quay.io/dpkshetty/podman:gitlab_multi
+#   script:
 
-    - echo "Building container on x86"
-    - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache
-    - echo "Build complete."
+#     - echo "Building container on x86"
+#     - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache
+#     - echo "Build complete."
 
-    - echo "Listing podman images"
-    - podman --storage-driver=vfs images
+#     - echo "Listing podman images"
+#     - podman --storage-driver=vfs images
 
-    - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
-    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $APP ${IMAGE_REGISTRY}:${TAG}-x86
+#     - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
+#     - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $APP ${IMAGE_REGISTRY}:${TAG}-x86
 
 
 ppc64le-build:
   stage: container-build
   tags:
     - openshift
-    # - ppc64le
-    - x86
+    - ppc64le
   image:
     name: quay.io/dpkshetty/podman:gitlab_multi
   script:
@@ -56,7 +55,7 @@ multiarch-manifest:
   image:
     name: quay.io/dpkshetty/podman:gitlab_multi
   needs:
-    - x86-build
+    # - x86-build
     - ppc64le-build
   script:
     - echo "Creating multiarch manifest ${IMAGE_REGISTRY}:${TAG}-multiarch"
