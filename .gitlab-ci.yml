@@ -58,14 +58,16 @@ ppc64le-build:
   script:
     
     - echo "Building container on ppc64le"
-    - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache 
+    - podman --storage-driver=vfs build --isolation chroot -t backend -f skupper/backend/Containerfile --no-cache 
+    - podman --storage-driver=vfs build --isolation chroot -t frontend -f skupper/frontend/Containerfile --no-cache 
     - echo "Build complete."
 
     - echo "Listing podman images"
     - podman --storage-driver=vfs images
 
     - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
-    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $APP ${IMAGE_REGISTRY}:${TAG}-ppc64le
+    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd backend quay.io/repository/arslankhanali/skupper-backend:latest-ppc64le
+    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd frontend quay.io/repository/arslankhanali/skupper-frontend:latest-ppc64le
 
 # s390x-build:
 #   stage: container-build
@@ -99,7 +101,13 @@ multiarch-manifest:
   script:
     - echo "Creating multiarch manifest ${IMAGE_REGISTRY}:${TAG}-multiarch"
     - podman manifest create mylist
-    - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-ppc64le
-    - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-x86
-    - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-s390x
-    - podman manifest push --creds $quay_user:$quay_passwd mylist ${IMAGE_REGISTRY}:${TAG}-multiarch
+    - podman manifest add mylist quay.io/repository/arslankhanali/skupper-frontend:latest-ppc64le
+    - podman manifest push --creds $quay_user:$quay_passwd mylist1 quay.io/repository/arslankhanali/skupper-frontend:latest
+    - podman manifest create mylist1
+    - podman manifest add mylist1 quay.io/repository/arslankhanali/skupper-backend:latest-ppc64le
+    - podman manifest push --creds $quay_user:$quay_passwd mylist1 quay.io/repository/arslankhanali/skupper-backend:latest
+
+    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-ppc64le
+    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-x86
+    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-s390x
+    # - podman manifest push --creds $quay_user:$quay_passwd mylist ${IMAGE_REGISTRY}:${TAG}-multiarch
