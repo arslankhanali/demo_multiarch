@@ -77,13 +77,7 @@ class MainPage extends gesso.Page {
                 gesso.fetchJSON("/api/cpu-architecture", archData => {
                     this.name += ` (${archData.arch})`;
 
-                    // Fetch frontend CPU architecture
-                    fetch('/api/frontend-cpu-architecture')
-                        .then(response => response.json())
-                        .then(frontendArchData => {
-                            this.name += ` (Frontend: ${frontendArchData.arch})`;
-                            super.process();
-                        });
+                    super.process();
                 });
 
                 return;

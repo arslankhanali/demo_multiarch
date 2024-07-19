@@ -16,7 +16,6 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-
 import animalid
 import argparse
 import asyncio
@@ -73,6 +72,11 @@ async def generate_id(request):
     }
 
     return JSONResponse(response_data)
+
+@star.route("/api/cpu-architecture", methods=["GET"])
+async def cpu_architecture(request):
+    arch = get_cpu_architecture()
+    return JSONResponse({"arch": arch})
 
 @star.route("/api/hello", methods=["POST"])
 async def hello(request):

@@ -169,3 +169,13 @@ oc delete all --selector app=demo-multiarch
 ```
 # Thank You
 The End
+
+
+oc create deployment frontend --image quay.io/arslankhanali/skupper-frontend:latest
+oc expose deployment/frontend --port 8080 --type LoadBalancer
+oc create route edge frontend --service=frontend --port=8080 
+
+echo "https://$(oc get route frontend -o jsonpath='{.spec.host}')"
+oc get secret skupper-console-users -n canberra -o jsonpath='{.data.admin}' | base64 --decode # user is admin
+
+oc create deployment backend --image quay.io/arslankhanali/skupper-backend:latest
