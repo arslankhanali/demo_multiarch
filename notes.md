@@ -43,3 +43,7 @@ git push -u origin main
 git remote add github https://github.com/arslankhanali/demo_multiarch.git
 git push -u github main
 ```
+
+# Dont write repository in quay url
+WRONG: https://quay.io/repository/arslankhanali/skupper-backend
+RIGHT: https://quay.io/arslankhanali/skupper-backend

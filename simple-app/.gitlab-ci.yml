@@ -1,0 +1,85 @@
+stages:
+  - container-build
+  - multiarch-push
+
+
+variables:
+  IMAGE_REGISTRY: "quay.io/arslankhanali/demo-multiarch"
+  TAG: "tag-demo-multiarch"
+  APP: app-demo-multiarch
+
+x86-build:
+  stage: container-build
+  tags:
+    - openshift
+    - x86
+  image:
+    name: quay.io/dpkshetty/podman:gitlab_multi
+  script:
+
+    - echo "Building container on x86"
+    - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache
+    - echo "Build complete."
+
+    - echo "Listing podman images"
+    - podman --storage-driver=vfs images
+
+    - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
+    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $APP ${IMAGE_REGISTRY}:${TAG}-x86
+
+
+# ppc64le-build:
+#   stage: container-build
+#   tags:
+#     - openshift
+#     - ppc64le
+#   image:
+#     name: quay.io/dpkshetty/podman:gitlab_multi
+#   script:
+    
+#     - echo "Building container on ppc64le"
+#     - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache 
+#     - echo "Build complete."
+
+#     - echo "Listing podman images"
+#     - podman --storage-driver=vfs images
+
+#     - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
+#     - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $APP ${IMAGE_REGISTRY}:${TAG}-ppc64le
+
+# s390x-build:
+#   stage: container-build
+#   tags:
+#     - openshift
+#     - s390x
+#   image:
+#     name: quay.io/dpkshetty/podman:gitlab_multi
+#   script:
+    
+#     - echo "Building container on s390x"
+#     - podman --storage-driver=vfs build --isolation chroot -t $APP -f Containerfile --no-cache 
+#     - echo "Build complete."
+
+#     - echo "Listing podman images"
+#     - podman --storage-driver=vfs images
+
+#     - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
+#     - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $APP ${IMAGE_REGISTRY}:${TAG}-s390x
+
+multiarch-manifest:
+  stage: multiarch-push
+  tags:
+    - openshift
+  image:
+    name: quay.io/dpkshetty/podman:gitlab_multi
+  needs:
+    - x86-build
+    # - ppc64le-build
+    # - s390x-build
+  script:
+    - echo "Creating multiarch manifest ${IMAGE_REGISTRY}:${TAG}-multiarch"
+    - podman manifest create mylist
+    - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-x86
+    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-ppc64le
+    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-s390x
+    - podman manifest push --creds $quay_user:$quay_passwd mylist ${IMAGE_REGISTRY}:${TAG}-multiarch
