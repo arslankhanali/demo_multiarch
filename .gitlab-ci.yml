@@ -58,8 +58,8 @@ ppc64le-build:
   script:
     
     - echo "Building container on ppc64le"
-    - podman --storage-driver=vfs build --isolation chroot -t backend -f skupper/backend/Containerfile --no-cache 
-    - podman --storage-driver=vfs build --isolation chroot -t frontend -f skupper/frontend/Containerfile --no-cache 
+    - podman --storage-driver=vfs build --isolation chroot -t backend -f skupper-app/backend/Containerfile --no-cache 
+    - podman --storage-driver=vfs build --isolation chroot -t frontend -f skupper-app/frontend/Containerfile --no-cache 
     - echo "Build complete."
 
     - echo "Listing podman images"
