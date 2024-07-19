@@ -4,9 +4,11 @@ stages:
 
 
 variables:
-  IMAGE_REGISTRY: "quay.io/arslankhanali/demo-multiarch"
-  TAG: "tag-demo-multiarch"
-  APP: app-demo-multiarch
+  IMAGE_REGISTRY_FRONT: "quay.io/arslankhanali/skupper-frontend"
+  FRONT: "frontend"
+  IMAGE_REGISTRY_BACK: "quay.io/arslankhanali/skupper-backend"
+  BACK: "backend"
+  TAG: "latest"
 
 
 # x86-build:
@@ -58,16 +60,16 @@ ppc64le-build:
   script:
     
     - echo "Building container on ppc64le"
-    - podman --storage-driver=vfs build --isolation chroot -t backend -f skupper-app/backend/Containerfile --no-cache 
-    - podman --storage-driver=vfs build --isolation chroot -t frontend -f skupper-app/frontend/Containerfile --no-cache 
+    - podman --storage-driver=vfs build --isolation chroot -t $BACK -f skupper-app/backend/Containerfile --no-cache 
+    - podman --storage-driver=vfs build --isolation chroot -t $FRONT -f skupper-app/frontend/Containerfile --no-cache 
     - echo "Build complete."
 
     - echo "Listing podman images"
     - podman --storage-driver=vfs images
 
     - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
-    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd backend quay.io/arslankhanali/skupper-backend:latest-ppc64le
-    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd frontend quay.io/arslankhanali/skupper-frontend:latest-ppc64le
+    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $BACK $IMAGE_REGISTRY_BACK:$TAG-ppc64le
+    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $FRONT $IMAGE_REGISTRY_FRONT:$TAG-ppc64le
 
 # s390x-build:
 #   stage: container-build
@@ -100,14 +102,12 @@ multiarch-manifest:
     # - s390x-build
   script:
     - echo "Creating multiarch manifest ${IMAGE_REGISTRY}:${TAG}-multiarch"
-    - podman manifest create mylist
-    - podman manifest add mylist quay.io/arslankhanali/skupper-frontend:latest-ppc64le
-    - podman manifest push --creds $quay_user:$quay_passwd mylist1 quay.io/arslankhanali/skupper-frontend:latest
-    - podman manifest create mylist1
-    - podman manifest add mylist1 quay.io/arslankhanali/skupper-backend:latest-ppc64le
-    - podman manifest push --creds $quay_user:$quay_passwd mylist1 quay.io/arslankhanali/skupper-backend:latest
-
-    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-ppc64le
-    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-x86
-    # - podman manifest add mylist ${IMAGE_REGISTRY}:${TAG}-s390x
-    # - podman manifest push --creds $quay_user:$quay_passwd mylist ${IMAGE_REGISTRY}:${TAG}-multiarch
+    - podman manifest create mylist-front
+    - podman manifest add mylist-front $IMAGE_REGISTRY_FRONT:$TAG-ppc64le
+    - podman manifest add mylist-front $IMAGE_REGISTRY_FRONT:$TAG-x86
+    - podman manifest push --creds $quay_user:$quay_passwd mylist-front $IMAGE_REGISTRY_FRONT:$TAG
+    
+    - podman manifest create mylist-back
+    - podman manifest add mylist-back $IMAGE_REGISTRY_BACK:$TAG-ppc64le
+    - podman manifest add mylist-back $IMAGE_REGISTRY_BACK:$TAG-x86
+    - podman manifest push --creds $quay_user:$quay_passwd mylist-back $IMAGE_REGISTRY_BACK:$TAG
