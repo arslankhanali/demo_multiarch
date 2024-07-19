@@ -1,0 +1,77 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    machine.openshift.io/GPU: "0"
+    machine.openshift.io/memoryMb: "16348"
+    machine.openshift.io/vCPU: "4"
+  labels:
+    machine.openshift.io/cluster-api-cluster: cluster-pmvqm-wv5qm
+  name: cluster-pmvqm-wv5qm-worker-aarch64-us-east-2a
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: cluster-pmvqm-wv5qm
+      machine.openshift.io/cluster-api-machineset: cluster-pmvqm-wv5qm-worker-aarch64-us-east-2a
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: cluster-pmvqm-wv5qm
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: cluster-pmvqm-wv5qm-worker-aarch64-us-east-2a
+    spec:
+      providerSpec:
+        value:
+          ami:
+            id: ami-08179aa9cdd6f31c7
+          apiVersion: machine.openshift.io/v1beta1
+          blockDevices:
+          - ebs:
+              encrypted: true
+              iops: 0
+              kmsKey:
+                arn: ""
+              volumeSize: 100
+              volumeType: gp2
+          credentialsSecret:
+            name: aws-cloud-credentials
+          deviceIndex: 0
+          iamInstanceProfile:
+            id: cluster-pmvqm-wv5qm-worker-profile
+          instanceType: m6g.xlarge
+          kind: AWSMachineProviderConfig
+          metadata:
+            creationTimestamp: null
+          placement:
+            availabilityZone: us-east-2a
+            region: us-east-2
+          securityGroups:
+          - filters:
+            - name: tag:Name
+              values:
+              - cluster-pmvqm-wv5qm-worker-sg
+          subnet:
+            filters:
+            - name: tag:Name
+              values:
+              - cluster-pmvqm-wv5qm-private-us-east-2a
+          tags:
+          - name: kubernetes.io/cluster/cluster-pmvqm-wv5qm
+            value: owned
+          - name: Stack
+            value: project ocp4-cluster-pmvqm
+          - name: env_type
+            value: ocp4-cluster
+          - name: guid
+            value: pmvqm
+          - name: owner
+            value: unknown
+          - name: platform
+            value: rhpds
+          - name: uuid
+            value: 4bcf0a5f-58b2-5812-87b0-670efdb5b030
+          userDataSecret:
+            name: worker-user-data

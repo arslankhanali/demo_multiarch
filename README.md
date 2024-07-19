@@ -90,7 +90,7 @@ spec:
   concurrent: 10
   gitlabUrl: https://gitlab.com
   serviceaccount: gitlab-runner-sa
-  tags: openshift, x86
+  tags: openshift, ppc64le
   token: gitlab-runner-secret
 EOF
 ```
@@ -156,7 +156,9 @@ Create 2 variables
 oc project demo
 oc new-app quay.io/arslankhanali/demo-multiarch:tag-demo-multiarch-multiarch
 oc create route edge demo-multiarch --service=demo-multiarch --port=5000
+echo "https://$(oc get route demo-multiarch -o jsonpath='{.spec.host}')" 
 
+# OR
 # Deploy using GitOps 
 oc apply -f manifests  
 ```

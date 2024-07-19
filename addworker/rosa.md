@@ -1,0 +1,5 @@
+aws configure
+
+rosa login --token="eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0NzQzYTkzMC03YmJiLTRkZGQtOTgzMS00ODcxNGRlZDc0YjUifQ.eyJpYXQiOjE3MjEzNjU0NTQsImp0aSI6ImE2OGI0Y2I2LTAyMTctNDNiMi04ZjI5LTJjY2ZhMDQ1NTBhZSIsImlzc
+
+rosa create account-roles --mode auto
