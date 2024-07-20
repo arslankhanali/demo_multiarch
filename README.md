@@ -7,16 +7,16 @@ Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU a
 
 ### Some Notes about this repo:
 Before we start, here are some fyi only
-  - **Continuous Integration**: This Readme will focus on GITLAB-RUNNERS for CI. But there is also working code for TEKTON-PIPELINES and GITHUB-ACTIONS in this repository. GITHUB-ACTIONS workflow builds image for 6 (arm, arm64, 386, amd64, ppc64le, s390x) different CPU architectures each time the code is pushed to github. All the resultant images are in 2 repositories quay.io/arslankhanali/skupper-frontend & quay.io/arslankhanali/skupper-backend.
+  - **Continuous Integration**: This Readme will focus on GITLAB-RUNNERS for CI. But there is also working code for TEKTON-PIPELINES and [GITHUB-ACTIONS](https://github.com/arslankhanali/demo_multiarch) in this repository. GITHUB-ACTIONS workflow builds image for 6 (arm, arm64, 386, amd64, ppc64le, s390x) different CPU architectures each time the code is pushed to github. All the resultant images are in 2 repositories quay.io/arslankhanali/skupper-frontend & quay.io/arslankhanali/skupper-backend.
   - **argo**: folder has the code to deploy application with GitOps
   - **Manifests**: You can also use manifests to deploy application
 
 ### Pre-Reqs 
 1. Access to OCP cluster on x86 and PPC
 2. Quay.io account with 2 repositories
-   1. quay.io/arslankhanali/skupper-frontent
-   2. quay.io/arslankhanali/skupper-backend
-3. gitlab account
+   1. [quay.io/arslankhanali/skupper-frontent](https://quay.io/repository/arslankhanali/skupper-frontend?tab=tags)
+   2. [quay.io/arslankhanali/skupper-backend](https://quay.io/repository/arslankhanali/skupper-backend?tab=tags)
+3. [gitlab repo](https://gitlab.com/arslankhanali/demo_multiarch)
 
 ### Our Application
 - We will be using modified hello-world application from skupper.io.
