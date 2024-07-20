@@ -40,10 +40,11 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build and push backend image
+        working-directory: skupper-app/backend
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: skupper-app/backend/Containerfile
+          file: Containerfile
           push: true
           tags: quay.io/arslankhanali/skupper-backend:latest-gh
           platforms: linux/amd64,linux/arm64,linux/ppc64le
@@ -51,10 +52,11 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
 
       - name: Build and push frontend image
+        working-directory: skupper-app/frontend
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: skupper-app/frontend/Containerfile
+          file: Containerfile
           push: true
           tags: quay.io/arslankhanali/skupper-frontend:latest-gh
           platforms: linux/amd64,linux/arm64,linux/ppc64le
