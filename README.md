@@ -226,7 +226,7 @@ Check the status of CI pipeline.
 You can see the logs by clicking on each Job  
 ![alt text](images/6-image-jobs.png)
 ### 4a. Verify
-demo_multiarch/images/7-image-quay-gl.png
+![alt text](images/7-image-quay-gl.png)
 
 # 5. Deploy Application
 ## 5a. Scenario 1: On 2 different OCP clusters
