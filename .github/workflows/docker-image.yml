@@ -1,4 +1,4 @@
-name: Build and Push Podman Images
+name: Build and Push Multi-Arch Podman Images
 
 on:
   push:
@@ -11,6 +11,41 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64, ppc64le]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Install Podman
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install podman
+
+      - name: Login to Quay.io
+        run: podman login quay.io -u ${{ secrets.QUAY_USERNAME }} -p ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Build and push images
+        run: |
+          cd skupper-app/backend
+          podman build --file Containerfile --tag quay.io/arslankhanali/skupper-backend:gh-${{ matrix.arch }}
+          podman push quay.io/arslankhanali/skupper-backend:gh-${{ matrix.arch }}
+
+          cd ../frontend
+          podman build --file Containerfile --tag quay.io/arslankhanali/skupper-frontend:gh-${{ matrix.arch }}
+          podman push quay.io/arslankhanali/skupper-frontend:gh-${{ matrix.arch }}
+
+      - name: Logout from Quay.io
+        run: podman logout quay.io
+
+  create-manifest:
+    runs-on: ubuntu-latest
+    needs: build-and-push
 
     steps:
       - name: Checkout code
@@ -24,17 +59,17 @@ jobs:
       - name: Login to Quay.io
         run: podman login quay.io -u ${{ secrets.QUAY_USERNAME }} -p ${{ secrets.QUAY_PASSWORD }}
 
-      - name: Build and push backend image
+      - name: Create and push multi-arch manifests
         run: |
-          cd skupper-app/backend
-          podman build --file Containerfile --tag quay.io/arslankhanali/skupper-backend:latest
-          podman push quay.io/arslankhanali/skupper-backend:latest
+          podman manifest create mylist-back
+          podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-x86_64
+          podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-ppc64le
+          podman manifest push --creds ${{ secrets.QUAY_USERNAME }}:${{ secrets.QUAY_PASSWORD }} mylist-back quay.io/arslankhanali/skupper-backend:gh
 
-      - name: Build and push frontend image
-        run: |
-          cd skupper-app/frontend
-          podman build --file Containerfile --tag quay.io/arslankhanali/skupper-frontend:latest
-          podman push quay.io/arslankhanali/skupper-frontend:latest
+          podman manifest create mylist-front
+          podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-x86_64
+          podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-ppc64le
+          podman manifest push --creds ${{ secrets.QUAY_USERNAME }}:${{ secrets.QUAY_PASSWORD }} mylist-front quay.io/arslankhanali/skupper-frontend:gh
 
       - name: Logout from Quay.io
         run: podman logout quay.io
