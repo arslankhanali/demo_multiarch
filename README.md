@@ -232,7 +232,9 @@ You can see the logs by clicking on each Job
 ## 5a. Scenario 1: On 2 different OCP clusters
 ### Deploy on cluster1
 ``` sh
+# ----------------
 # NAMESPACE CANBERRA
+# ----------------
 # Deploy frontend in namespace canberra
 oc new-project canberra
 oc new-app --name=frontend -l app=hello quay.io/arslankhanali/skupper-frontend:latest
@@ -249,7 +251,9 @@ oc get secret skupper-console-users -n canberra -o jsonpath='{.data.admin}' | ba
 # Stress test. https://<url-from-above>/api/hello
 ab -n 100 -c 10 -p skupper-app/payload.json -T application/json "https://$(oc get route frontend -o jsonpath='{.spec.host}')"/api/hello
 
+# ----------------
 # NAMESPACE SYDNEY
+# ----------------
 # Open new terminal tab - make sure its still cluster1
 # Deploy backend in namespace sydney
 oc new-project sydney
@@ -263,7 +267,9 @@ skupper expose deployment/backend --port 8080
 
 ### Deploy on cluster2
 ``` sh
+# ----------------
 # NAMESPACE MELBOURNE
+# ----------------
 # Deploy backend in namespace melbourne
 oc new-project melbourne
 oc new-app --name=backend -l app=hello quay.io/arslankhanali/skupper-backend:latest
@@ -275,7 +281,9 @@ skupper expose deployment/backend --port 8080
 ```
 ## 5b. Scenario 2: On same OCP cluster
 ```sh
+# ----------------
 # NAMESPACE east
+# ----------------
 # Deploy frontend in namespace east
 oc new-project east
 oc new-app --name=frontend -l app=hello quay.io/arslankhanali/skupper-frontend:latest
@@ -290,7 +298,9 @@ oc get secret skupper-console-users -n east -o jsonpath='{.data.admin}' | base64
 # Stress test. https://<url-from-above>/api/hello
 ab -n 100 -c 10 -p skupper-app/payload.json -T application/json "https://$(oc get route frontend -o jsonpath='{.spec.host}')"/api/hello
 
+# ----------------
 # NAMESPACE west
+# ----------------
 # Open new terminal tab - make sure its still cluster1
 # Deploy backend in namespace west
 oc new-project west
@@ -305,6 +315,7 @@ skupper expose deployment/backend --port 8080
 ```sh
 # skupper 
 skupper delete
+
 # App
 oc delete all --selector app=hello
 ```
