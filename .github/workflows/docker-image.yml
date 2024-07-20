@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64, ppc64le]
+        arch: [arm, arm64, 386, amd64, ppc64le, s390x]
 
     steps:
       - name: Checkout code
@@ -62,13 +62,21 @@ jobs:
       - name: Create and push multi-arch manifests
         run: |
           podman manifest create mylist-back
+          podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-arm
+          podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-arm64
+          podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-386
           podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-amd64
           podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-ppc64le
+          podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:gh-s390x
           podman manifest push --creds ${{ secrets.QUAY_USERNAME }}:${{ secrets.QUAY_PASSWORD }} mylist-back quay.io/arslankhanali/skupper-backend:gh
 
           podman manifest create mylist-front
+          podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-arm
+          podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-arm64
+          podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-386
           podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-amd64
           podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-ppc64le
+          podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:gh-s390x
           podman manifest push --creds ${{ secrets.QUAY_USERNAME }}:${{ secrets.QUAY_PASSWORD }} mylist-front quay.io/arslankhanali/skupper-frontend:gh
 
       - name: Logout from Quay.io
