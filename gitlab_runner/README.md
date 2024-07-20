@@ -1,5 +1,5 @@
-# Multi arch demo
-### Introduction
+# Setup GitLab Runner on OpenShift
+### Inspiration for demo
 The CI pipeline gets triggered whenever a change is made to the pipeline itself and/or application code. This pipeline trigger will cause the OpenShift cluster to build the HW architecture-specific container image(s)—x86 image and ppc64le image in our case—and push them to the container registry (Quay.io in this case). Eventually, the pipeline will combine the different (HW-specific) container images and create a multi-architecture (single) image which can be used across x86 and ppc64le OpenShift clusters. This saves the developers and operations team from dealing with multiple container images for an application.
 
 Detailed Instructions [here](https://developer.ibm.com/tutorials/build-multi-architecture-x86-and-power-container-images-using-gitlab/#step-7-a-peek-at-the-gitlab-ci-pipeline-yaml-file-10) 
@@ -7,32 +7,9 @@ Detailed Instructions [here](https://developer.ibm.com/tutorials/build-multi-arc
 Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU architectures.
 ![alt text](images/0-image-hld.png)
 
-## Pre-Reqs 
-1. Access to OCP cluster on x86 and PPC
-2. Quay.io account
-3. gitlab account
 
-## Parts of Demo
-1. PART1 - Setup GitLab Runner on clusters
-2. PART2 - Provide Gitlab with Quay variables.
-
-# Login to 2 Openshift clusters in terminal. Set a tab for each cluster
-```sh
-# canberra: TERMINAL TAB
-export KUBECONFIG=$HOME/.kube/config-canberra
-oc login  --server=https://api.cluster-pmvqm.sandbox432.opentlc.com:6443
-oc get -o jsonpath='{.status.infrastructureName}' infrastructure cluster
-
-# sydney: TERMINAL TAB
-export KUBECONFIG=$HOME/.kube/config-sydney
-oc login --server=https://api.cluster-s5cqt.dynamic.redhatworkshops.io:6443
-oc get -o jsonpath='{.status.infrastructureName}' infrastructure cluster
-```
-![alt text](images/0-image-terminals.png)
-
-# PART1 - Setup GitLab Runner on clusters
-### Install GitLab operator - [Same on Both cluster]
-Most of these steps will be similar on any OpenShift clusters. Except `create Runner` part where you will have to provide the correct tag.  
+### Install GitLab operator
+Most of these steps will be similar on different OpenShift clusters. Except `create Runner` part where you will have to provide the correct tag.  
 ```sh
 cat << EOF | oc apply -f-
 apiVersion: operators.coreos.com/v1alpha1
@@ -50,27 +27,22 @@ spec:
   sourceNamespace: openshift-marketplace
 EOF
 ```
-### Create a gitlab Project [Same on Both cluster]
-Gitlab Runner pods will run in this project.  
-These pods will help in building images.
+### Create Project
 ```sh
-# oc new-project gitlab  
+# oc new-project demo  
 cat << EOF | oc apply -f-
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: gitlab
+  name: demo
 EOF
 ```
 
-### Create Secret [Same on Both cluster]
-Get gitlab runner secret.  
+### Create Secret
 ![alt text](images/1-image-get-token.png)
   
 > To convert token to base64 and edit below  
-```sh
-echo -n <GL127690123602193703217> | base64
-```
+>  `echo -n '<GL127690123602193703217>' | base64`
 
 ``` sh
 cat << EOF | oc apply -f-
@@ -78,25 +50,25 @@ kind: Secret
 apiVersion: v1
 metadata:
   name: gitlab-runner-secret
-  namespace: gitlab
+  namespace: demo
 data:
-  runner-registration-token: R1IxMzQ4OTQxY1hwNHUI0ek5QbW0=
+  runner-registration-token: R1IxMzQ4OTQxY14ZXNrTUI0ek5QbW0=
 type: Opaque
 EOF
 ```
 
-### Create ServiceAccount [Same on Both cluster]
+### Create ServiceAccount
 ``` sh
 cat << EOF | oc apply -f-
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: gitlab-runner-sa
-  namespace: gitlab
+  namespace: demo
 EOF
 ```
 
-### Create Runner [DIFFERENT on Both cluster]
+### Create Runner (Will be different to each cluster)
 Use the correct `tag` as per your arch and then reference it in `.gitlab-ci.yml` file.  
 Examples:  
 `tags: openshift, x86` (as used in our case below)  
@@ -108,28 +80,12 @@ or
 `tags: openshift, arm`  
 
 ``` sh
-# For x86 OCP Cluster
 cat << EOF | oc apply -f-
 apiVersion: apps.gitlab.com/v1beta2
 kind: Runner
 metadata:
   name: example-runner
-  namespace: gitlab
-spec:
-  concurrent: 10
-  gitlabUrl: https://gitlab.com
-  serviceaccount: gitlab-runner-sa
-  tags: openshift, x86
-  token: gitlab-runner-secret
-EOF
-
-# For PPC OCP Cluster
-cat << EOF | oc apply -f-
-apiVersion: apps.gitlab.com/v1beta2
-kind: Runner
-metadata:
-  name: example-runner
-  namespace: gitlab
+  namespace: demo
 spec:
   concurrent: 10
   gitlabUrl: https://gitlab.com
@@ -139,18 +95,18 @@ spec:
 EOF
 ```
 
-### Create Rolebindings [Same on Both cluster]
+### Create Rolebindings
 ``` sh
 cat << EOF | oc apply -f-
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: add-anyuid-to-my-gitlab-sa
-  namespace: gitlab
+  namespace: demo
 subjects:
   - kind: ServiceAccount
     name: gitlab-runner-sa
-    namespace: gitlab
+    namespace: demo
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -162,28 +118,19 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: add-my-gitlab-sa-to-runner-app-role
-  namespace: gitlab
+  namespace: demo
 subjects:
   - kind: ServiceAccount
     name: gitlab-runner-sa
-    namespace: gitlab
+    namespace: demo
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: gitlab-runner-app-role
 EOF
 ```
-### Verify that Runner are running on both OCP clusters
-![alt text](images/1.1-image-runnersready.png)
-
-# PART2 - Provide Gitlab with Quay variables.
 ### Create Robot Account on Quay
-This is needed so gitlab pipeline can push images to Quay.  
-Create 2 PUBLIC repositories.
-- skupper-frontend 
-- skupper-backend
-- Give robotaccount access to the BOTH repositories. Access to skupper-frontend is shown below. Do the same for skupper-backend
-![alt text](images/2.1-image-robotfront.png)
+![alt text](images/2-image-robot-account.png)
 
 ### Create variables in GitLab to access Quay using robot account
 Create 2 variables  

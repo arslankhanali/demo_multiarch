@@ -9,25 +9,25 @@ variables:
   BACK: "backend"
   TAG: "latest"
 
-x86-build:
-  stage: container-build
-  tags:
-    - openshift
-    - x86
-  image:
-    name: quay.io/dpkshetty/podman:gitlab_multi
-  script:
-    - echo "Building container on x86"
-    - podman --storage-driver=vfs build --isolation chroot -t $BACK -f skupper-app/backend/Containerfile --no-cache 
-    - podman --storage-driver=vfs build --isolation chroot -t $FRONT -f skupper-app/frontend/Containerfile --no-cache 
-    - echo "Build complete."
+# x86-build:
+#   stage: container-build
+#   tags:
+#     - openshift
+#     - x86
+#   image:
+#     name: quay.io/dpkshetty/podman:gitlab_multi
+#   script:
+#     - echo "Building container on x86"
+#     - podman --storage-driver=vfs build --isolation chroot -t $BACK -f skupper-app/backend/Containerfile --no-cache 
+#     - podman --storage-driver=vfs build --isolation chroot -t $FRONT -f skupper-app/frontend/Containerfile --no-cache 
+#     - echo "Build complete."
 
-    - echo "Listing podman images"
-    - podman --storage-driver=vfs images
+#     - echo "Listing podman images"
+#     - podman --storage-driver=vfs images
 
-    - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
-    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $BACK $IMAGE_REGISTRY_BACK:$TAG-x86
-    - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $FRONT $IMAGE_REGISTRY_FRONT:$TAG-x86
+#     - echo "Push image to ${IMAGE_REGISTRY}:${TAG}"
+#     - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $BACK $IMAGE_REGISTRY_BACK:$TAG-x86
+#     - podman --storage-driver=vfs push --creds $quay_user:$quay_passwd $FRONT $IMAGE_REGISTRY_FRONT:$TAG-x86
 
 ppc64le-build:
   stage: container-build
@@ -57,7 +57,7 @@ multiarch-manifest:
   image:
     name: quay.io/dpkshetty/podman:gitlab_multi
   needs:
-    - x86-build
+    # - x86-build
     - ppc64le-build
 
   script:
