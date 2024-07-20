@@ -23,4 +23,4 @@ RIGHT: https://quay.io/arslankhanali/skupper-backend
 
 # Same robot Account can be shared with multiple repositories in Quay
 
-#
+# Pushing to gitlab will trigger gitlab CI pipeline.

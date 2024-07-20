@@ -75,7 +75,10 @@ class MainPage extends gesso.Page {
 
                 // Fetch the CPU architecture
                 gesso.fetchJSON("/api/cpu-architecture", archData => {
-                    this.name += ` (${archData.arch})`;
+                    // Check if the CPU architecture is already included
+                    if (!this.name.includes(archData.arch)) {
+                        this.name += ` (${archData.arch})`;
+                    }
 
                     super.process();
                 });

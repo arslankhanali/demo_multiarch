@@ -62,6 +62,8 @@ oc get rolebinding argocd-admin-binding -n demo
 ```sh
 oc apply -f argo/application_frontend.yaml
 oc apply -f argo/application_backend.yaml
+
+echo "https://$(oc get route frontend -o jsonpath='{.spec.host}')" 
 ```
 
 ### Application update
@@ -72,6 +74,8 @@ Solution:
 
 ### Get password for Argo UI
 ``` sh
+# Argo url
+echo "https://$(oc get route openshift-gitops-server -n openshift-gitops -o jsonpath='{.spec.host}')" 
 # username in admin
 oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 --decode  
 ```
