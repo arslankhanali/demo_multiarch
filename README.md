@@ -37,7 +37,7 @@ Before we start, here are some fyi only
    1. Verify that app is running
 4. CONGRATULATIONS - You have done it
 
-### Login to our Openshift clusters in terminal. Set a tab for each cluster
+### 1. Login to our Openshift clusters in terminal. Set a tab for each cluster
 ```sh
 # canberra: TERMINAL TAB
 export KUBECONFIG=$HOME/.kube/config-canberra
@@ -53,8 +53,8 @@ Use `export KUBECONFIG=$HOME/.kube/config-sydney` in any new terminal tab to mak
 
 ![alt text](images/0-image-terminals.png)
 
-### Setup GitLab Runner on clusters
-### Install GitLab operator - [Same on Both cluster]
+### 2. Setup GitLab Runner on clusters
+### 2a.Install GitLab operator - [Same on Both cluster]
 Most of these steps will be similar on any OpenShift clusters. Except `create Runner` part where you will have to provide the correct tag.  
 ```sh
 cat << EOF | oc apply -f-
@@ -73,7 +73,7 @@ spec:
   sourceNamespace: openshift-marketplace
 EOF
 ```
-### Create a gitlab Project [Same on Both cluster]
+### 2b. Create a gitlab Project [Same on Both cluster]
 Gitlab Runner pods will run in this project.  
 These pods will help in building images.
 ```sh
@@ -86,7 +86,7 @@ metadata:
 EOF
 ```
 
-### Create Secret [Same on Both cluster]
+### 2c. Create Secret [Same on Both cluster]
 Get gitlab runner secret.  
 ![alt text](images/1-image-get-token.png)
   
@@ -108,7 +108,7 @@ type: Opaque
 EOF
 ```
 
-### Create ServiceAccount [Same on Both cluster]
+### 2d. Create ServiceAccount [Same on Both cluster]
 ``` sh
 cat << EOF | oc apply -f-
 apiVersion: v1
@@ -119,7 +119,7 @@ metadata:
 EOF
 ```
 
-### Create Runner [DIFFERENT on Both cluster]
+### 2e. Create Runner [DIFFERENT on Both cluster]
 Use the correct `tag` as per your arch and then reference it in `.gitlab-ci.yml` file.  
 Examples:  
 `tags: openshift, x86` (as used in our case below)  
@@ -162,7 +162,7 @@ spec:
 EOF
 ```
 
-### Create Rolebindings [Same on Both cluster]
+### 2f. Create Rolebindings [Same on Both cluster]
 ``` sh
 cat << EOF | oc apply -f-
 kind: RoleBinding
@@ -196,11 +196,11 @@ roleRef:
   name: gitlab-runner-app-role
 EOF
 ```
-### Verify that Runner are running on both OCP clusters
+### 2g. Verify that Runner are running on both OCP clusters
 ![alt text](images/1.1-image-runnersready.png)
 
-## Provide Gitlab with Quay variables.
-### Create Robot Account on Quay
+## 3. Provide Gitlab with Quay variables.
+### 3a. Create Robot Account on Quay
 This is needed so gitlab pipeline can push images to Quay.  
 Create 2 PUBLIC repositories.
 - skupper-frontend 
@@ -208,7 +208,7 @@ Create 2 PUBLIC repositories.
 - Give robotaccount access to the BOTH repositories. Access to skupper-frontend is shown below. Do the same for skupper-backend
 ![alt text](images/2.1-image-robotfront.png)
 
-### Create variables in GitLab to access Quay using robot account
+### 3b. Create variables in GitLab to access Quay using robot account
 Create 2 variables  
 1. quay_user
 2. quay_passwd
@@ -218,18 +218,18 @@ Create 2 variables
 ![alt text](images/4-image-variables.png)
 
 > APIs can be used to create these variables as well.
-### Run pipeline
+### 4. Run pipeline
 Push changes to git repo and CI pipeline will start Automatically.  
 New pods with the name of 'runner*' will pop up in gitlab project in both OCP clusters.  
 Check the status of CI pipeline.
 ![alt text](images/5-image-runpipeline.png)
 You can see the logs by clicking on each Job  
 ![alt text](images/6-image-jobs.png)
-### Verify
+### 4a. Verify
 demo_multiarch/images/7-image-quay-gl.png
 
-# Deploy Application
-## Scenario 1: On 2 different OCP clusters
+# 5. Deploy Application
+## 5a. Scenario 1: On 2 different OCP clusters
 ### Deploy on cluster1
 ``` sh
 # NAMESPACE CANBERRA
@@ -273,7 +273,7 @@ skupper link create ~/canberra-melbourne.token
 skupper expose deployment/backend --port 8080
 
 ```
-## Scenario 2: On same OCP cluster
+## 5b. Scenario 2: On same OCP cluster
 ```sh
 # NAMESPACE east
 # Deploy frontend in namespace east
@@ -301,7 +301,7 @@ skupper link create ~/east-west.token
 skupper expose deployment/backend --port 8080
  
 ```
-### Delete application
+### 6. Delete application
 ```sh
 # skupper 
 skupper delete
