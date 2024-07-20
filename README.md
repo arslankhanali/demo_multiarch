@@ -5,15 +5,30 @@ The CI pipeline gets triggered whenever a change is made to the pipeline itself 
 Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU architectures.
 ![alt text](images/0-image-hld.png)
 
-## Pre-Reqs 
+### Some Notes about this repo:
+Before we start, here are some fyi only
+  - **Continuous Integration**: This Readme will focus on GITLAB-RUNNERS for CI. But there is also working code for TEKTON-PIPELINES and GITHUB-ACTIONS in this repository. GITHUB-ACTIONS workflow builds image for 6 (arm, arm64, 386, amd64, ppc64le, s390x) different CPU architectures each time the code is pushed to github. All the resultant images are in 2 repositories quay.io/arslankhanali/skupper-frontend & quay.io/arslankhanali/skupper-backend.
+  - **argo**: folder has the code to deploy application with GitOps
+  - **Manifests**: You can also use manifests to deploy application
+
+### Pre-Reqs 
 1. Access to OCP cluster on x86 and PPC
-2. Quay.io account
+2. Quay.io account with 2 repositories
+   1. quay.io/arslankhanali/skupper-frontent
+   2. quay.io/arslankhanali/skupper-backend
 3. gitlab account
 
-## Parts of Demo
+### Our Application
+- We will be using modified hello-world application from skupper.io.
+  - It consistes of a frontend and backend, both available on port 8080
+  - Each time you click on 'Say hello' it will ping a backend service and get its name and cpu architecture.
+  - You can deploy multiple backends on different Openshift clusters and have them connect to the frontend service via scupper.
+![alt text](images/20-image-app.png)
+
+## Index
 1. CI Pipeline
-   1. PART 1 - Setup GitLab Runner on clusters
-   2. PART 2 - Provide Gitlab with Quay variables.
+   1. Setup GitLab Runner on clusters
+   2. Provide Gitlab with Quay variables.
 2. Deploy Application
    1. Deploy frotend on cluster1
    2. Deploy backend on cluster2
@@ -21,7 +36,7 @@ Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU a
    1. Verify that app is running
 4. CONGRATULATIONS - You have done it
 
-# Login to 2 Openshift clusters in terminal. Set a tab for each cluster
+### Login to our Openshift clusters in terminal. Set a tab for each cluster
 ```sh
 # canberra: TERMINAL TAB
 export KUBECONFIG=$HOME/.kube/config-canberra
@@ -37,7 +52,7 @@ Use `export KUBECONFIG=$HOME/.kube/config-sydney` in any new terminal tab to mak
 
 ![alt text](images/0-image-terminals.png)
 
-# PART 1 - Setup GitLab Runner on clusters
+### Setup GitLab Runner on clusters
 ### Install GitLab operator - [Same on Both cluster]
 Most of these steps will be similar on any OpenShift clusters. Except `create Runner` part where you will have to provide the correct tag.  
 ```sh
@@ -183,7 +198,7 @@ EOF
 ### Verify that Runner are running on both OCP clusters
 ![alt text](images/1.1-image-runnersready.png)
 
-# PART 2 - Provide Gitlab with Quay variables.
+## Provide Gitlab with Quay variables.
 ### Create Robot Account on Quay
 This is needed so gitlab pipeline can push images to Quay.  
 Create 2 PUBLIC repositories.
