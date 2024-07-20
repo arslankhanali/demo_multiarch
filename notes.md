@@ -4,7 +4,7 @@ Set the architecture of the image to be built, and that of the base image to be 
 
 # Push to both Gitlab and Github
 ``` sh
-git remote                                                                                                                          
+git remote                 
 > github # github
 > origin # gitlab 
 
@@ -17,14 +17,16 @@ git remote add github https://github.com/arslankhanali/demo_multiarch.git
 git push -u github main
 ```
 
-# Dont write repository in quay url
+# Dont write `repository` in quay url
 WRONG: https://quay.io/repository/arslankhanali/skupper-backend
 RIGHT: https://quay.io/arslankhanali/skupper-backend
 
-# Same robot Account can be shared with multiple repositories in Quay
+# Quay robot Accounts
+- Same robot Account can be shared with multiple repositories in Quay
 
-# Pushing to gitlab will trigger gitlab CI pipeline.
-
+# git push triggers
+- Pushing to gitlab will trigger gitlab CI pipeline.
+- Pushing to gitlab will trigger gitlab CI pipeline.
 
 # Combine manifests
 podman manifest create mylist-back
@@ -38,8 +40,9 @@ podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:latest-x
 podman manifest push mylist-front quay.io/arslankhanali/skupper-frontend:latest
 
 # arch in Containerfile
-#FROM --platform=linux/arm registry.access.redhat.com/ubi9/python-312
+```dockerfile
+FROM --platform=linux/arm registry.access.redhat.com/ubi9/python-312
 FROM registry.access.redhat.com/ubi9/python-312
-
+```
 # arch in podman build
 podman build -t demo-multiarch-arm64 -f Containerfile . --arch=amd64  

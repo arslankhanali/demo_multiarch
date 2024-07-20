@@ -33,11 +33,11 @@ jobs:
       - name: Build and push images
         run: |
           cd skupper-app/backend
-          podman build --file Containerfile --tag quay.io/arslankhanali/skupper-backend:gh-${{ matrix.arch }}
+          podman build --arch=${{ matrix.arch }} --file Containerfile --tag quay.io/arslankhanali/skupper-backend:gh-${{ matrix.arch }}
           podman push quay.io/arslankhanali/skupper-backend:gh-${{ matrix.arch }}
 
           cd ../frontend
-          podman build --file Containerfile --tag quay.io/arslankhanali/skupper-frontend:gh-${{ matrix.arch }}
+          podman build --arch=${{ matrix.arch }} --file Containerfile --tag quay.io/arslankhanali/skupper-frontend:gh-${{ matrix.arch }}
           podman push quay.io/arslankhanali/skupper-frontend:gh-${{ matrix.arch }}
 
       - name: Logout from Quay.io
