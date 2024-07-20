@@ -8,11 +8,21 @@ metadata:
   name: openshift-pipelines-operator
   namespace: openshift-operators
 spec:
-  channel: stable
+  channel: latest
   installPlanApproval: Automatic
   name: openshift-pipelines-operator-rh
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+EOF
+```
+### Create a demo Project 
+```sh
+# oc new-project demo  
+cat << EOF | oc apply -f-
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
 EOF
 ```
 ### Create a pvc
@@ -42,46 +52,39 @@ apiVersion: v1
 kind: Secret
 metadata:
   labels:
-    app: demo-multiarch
-name: quay-authentication
-annotations:
-   tekton.dev/docker-0: https://quay.io # Described below
+    app: hello
+  name: quay-authentication
+  annotations:
+    tekton.dev/docker-0: https://quay.io
 type: kubernetes.io/basic-auth
 stringData:
-username: arslankhanali
-password: <pass>
+  username: arslankhanali
+  password: <pass>
 EOF
 ```
 ### Give service account 'pipeline' access to the secret
+- This service account is automatically created in every project.  
+- You can provide it with a secret. This is project specific i.e. pipeline SA in other projects will not have access to it.
 ```sh
 oc patch serviceaccount pipeline -p '{"secrets": [{"name": "quay-authentication"}]}'
 ```
-### Create Pipeline
+### Create Tekton Pipeline
+- Pipeline to build frontend and backend images
+- Images will be pushed to https://quay.io/repository/arslankhanali/skupper-frontend:tekton and https://quay.io/repository/arslankhanali/skupper-backend:tekton
+  
 ```sh
-oc apply -f tekton/pipeline.yaml
+oc apply -f tekton/pipeline_build_images.yaml        
 ```
 ![alt text](../images/9-image-pipeline.png)
 
 ### Run Pipeline
 ```sh
-oc apply -f tekton/pipelinerun.yaml
+oc apply -f tekton/pipelinerun_build_images.yaml   
 ```
 ![alt text](../images/10-image-run.png)
 
 ### Verify
 ![alt text](../images/11-image-quay.png)
 
-### Deploy Application
-``` sh
-# Deploy using CLI
-oc project demo
-oc new-app quay.io/arslankhanali/demo-multiarch:tektonbuild
-oc create route edge demo-multiarch --service=demo-multiarch --port=5000 
-```
-
-### Delete application
-```sh
-oc delete all --selector app=demo-multiarch
-```
 # Thank You
 The End

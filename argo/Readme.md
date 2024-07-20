@@ -22,6 +22,8 @@ Wait couple minutes so that CRDs are installed in previous step.
 # rbac:
 #   - defaultPolicy: 'role:admin'
 oc apply -f argo/argo_instance.yaml
+#or
+oc apply -f https://raw.githubusercontent.com/arslankhanali/demo_multiarch/main/argo/argo_instance.yaml
 ```
 
 ### Create `demo` namespace
@@ -62,8 +64,14 @@ oc get rolebinding argocd-admin-binding -n demo
 ```sh
 oc apply -f argo/application_frontend.yaml
 oc apply -f argo/application_backend.yaml
+# oc apply -f https://raw.githubusercontent.com/arslankhanali/demo_multiarch/main/argo/application_frontend.yaml
+# oc apply -f https://raw.githubusercontent.com/arslankhanali/demo_multiarch/main/argo/application_backend.yaml
 
+# Get App URL
 echo "https://$(oc get route frontend -o jsonpath='{.spec.host}')" 
+
+# Stress test. https://<url-from-above>/api/hello
+ab -n 100 -c 10 -p skupper-app/payload.json -T application/json https://frontend-demo.apps.cluster-s5cqt.dynamic.redhatworkshops.io/api/hello
 ```
 
 ### Application update
@@ -84,4 +92,9 @@ oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.a
 ```sh
 oc delete -f argo/application_frontend.yaml
 oc delete -f argo/application_backend.yaml
+
+# oc delete -f https://raw.githubusercontent.com/arslankhanali/demo_multiarch/main/argo/application_frontend.yaml
+# oc delete -f https://raw.githubusercontent.com/arslankhanali/demo_multiarch/main/argo/application_backend.yaml
+
+oc delete all -l app=hello
 ```

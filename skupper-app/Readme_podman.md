@@ -1,4 +1,5 @@
 # Build containers
+cd skupper-app
 podman build -t frontend -f frontend/Containerfile
 podman build -t backend -f backend/Containerfile
 
@@ -6,6 +7,8 @@ podman build -t backend -f backend/Containerfile
 podman network create mynetwork
 
 # Run the Containers in the Pod: Run both the frontend and backend containers within the created Pod:
+podman rm frontend
+podman rm backend
 podman run -d --network mynetwork --name frontend -p 8080:8080 frontend
 podman run -d --network mynetwork --name backend -p 8081:8080 backend
 
@@ -15,7 +18,6 @@ refresh tab for new name
 
 # Restart backend
 podman restart backend
-
 
 # Push to quay 
 # Make sure repositories are public before pushing

@@ -229,6 +229,10 @@ skupper token create ~/canberra-melbourne.token
 
 echo "https://$(oc get route skupper -o jsonpath='{.spec.host}')"
 oc get secret skupper-console-users -n canberra -o jsonpath='{.data.admin}' | base64 --decode # user is admin
+
+# Stress test. https://<url-from-above>/api/hello
+ab -n 100 -c 10 -p skupper-app/payload.json -T application/json "https://$(oc get route frontend -o jsonpath='{.spec.host}')"/api/hello
+
 # NAMESPACE SYDNEY
 # Open new terminal tab - make sure its still cluster1
 # Deploy backend in namespace sydney
@@ -266,6 +270,9 @@ skupper init --enable-console --enable-flow-collector
 skupper token create ~/east-west.token
 
 oc get secret skupper-console-users -n east -o jsonpath='{.data.admin}' | base64 --decode # user is admin
+
+# Stress test. https://<url-from-above>/api/hello
+ab -n 100 -c 10 -p skupper-app/payload.json -T application/json "https://$(oc get route frontend -o jsonpath='{.spec.host}')"/api/hello
 
 # NAMESPACE west
 # Open new terminal tab - make sure its still cluster1

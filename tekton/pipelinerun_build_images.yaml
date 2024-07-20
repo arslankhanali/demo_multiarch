@@ -3,18 +3,20 @@ kind: PipelineRun
 metadata:
   annotations:
     chains.tekton.dev/signed: "true"
-    pipeline.openshift.io/started-by: admin
+    pipeline.openshift.io/started-by: kube:admin
   labels:
-    app: demo-multiarch
-    tekton.dev/pipeline: build-demoapp
-  name: build-demoapp
+    app: hello
+    tekton.dev/pipeline: build-images
+  name: build-images-run
   namespace: demo
 spec:
   pipelineRef:
-    name: build-demoapp
+    name: build-images
   taskRunTemplate:
     serviceAccountName: pipeline
+  timeouts:
+    pipeline: 1h0m0s
   workspaces:
   - name: workspace
     persistentVolumeClaim:
-      claimName: pvc
+      claimName: demo-pvc
