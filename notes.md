@@ -24,3 +24,22 @@ RIGHT: https://quay.io/arslankhanali/skupper-backend
 # Same robot Account can be shared with multiple repositories in Quay
 
 # Pushing to gitlab will trigger gitlab CI pipeline.
+
+
+# Combine manifests
+podman manifest create mylist-back
+podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:latest-ppc64le
+podman manifest add mylist-back quay.io/arslankhanali/skupper-backend:latest-x86
+podman manifest push mylist-back quay.io/arslankhanali/skupper-backend:latest
+
+podman manifest create mylist-front
+podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:latest-ppc64le
+podman manifest add mylist-front quay.io/arslankhanali/skupper-frontend:latest-x86
+podman manifest push mylist-front quay.io/arslankhanali/skupper-frontend:latest
+
+# arch in Containerfile
+#FROM --platform=linux/arm registry.access.redhat.com/ubi9/python-312
+FROM registry.access.redhat.com/ubi9/python-312
+
+# arch in podman build
+podman build -t demo-multiarch-arm64 -f Containerfile . --arch=amd64  
