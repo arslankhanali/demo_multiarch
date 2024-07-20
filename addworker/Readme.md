@@ -1,3 +1,6 @@
+< WIP >
+# For multi arch OCP
+Openshift cluster with worker nodes of different CPU architectures. 
 ```sh
 oc -n openshift-config patch cm admin-acks --patch '{"data":{"ack-4.12-kube-1.26-api-removals-in-4.13":"true"}}' --type=merge
 

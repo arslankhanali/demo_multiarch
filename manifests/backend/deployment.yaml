@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: backend
-          image: quay.io/arslankhanali/skupper-backend
+          image: quay.io/arslankhanali/skupper-backend:latest
           ports:
             - containerPort: 8080  # Expose your application on port 5000
