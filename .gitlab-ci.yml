@@ -7,7 +7,7 @@ variables:
   FRONT: "frontend"
   IMAGE_REGISTRY_BACK: "quay.io/arslankhanali/skupper-backend"
   BACK: "backend"
-  TAG: "latest"
+  TAG: "gitlab"
 
 x86-build:
   stage: container-build
