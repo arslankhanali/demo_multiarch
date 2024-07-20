@@ -16,17 +16,11 @@ spec:
 EOF
 ```
 ### Argo Instance
-Wait couple minutes so that CRDs are installed in previous step.
 ```sh
 # Access Givem: Openshift login user as admin
 # rbac:
 #   - defaultPolicy: 'role:admin'
 oc apply -f argo/argo_instance.yaml
-```
-
-### Create `demo` namespace
-```sh
-oc new-project demo
 ```
 
 ### Give Argo Service Account Access to `demo` namespace
@@ -60,8 +54,7 @@ oc get rolebinding argocd-admin-binding -n demo
 
 ### Create Application
 ```sh
-oc apply -f argo/application_frontend.yaml
-oc apply -f argo/application_backend.yaml
+oc apply -f argo/application.yaml
 ```
 
 ### Application update
@@ -78,6 +71,5 @@ oc get secret openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.a
 
 ### Delete Application
 ```sh
-oc delete -f argo/application_frontend.yaml
-oc delete -f argo/application_backend.yaml
+oc delete -f argo/application.yaml
 ```

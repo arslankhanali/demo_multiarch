@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: hello  # Add label to match selector
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello  # Add label to match selector
+    spec:
+      containers:
+        - name: backend
+          image: quay.io/arslankhanali/skupper-backend
+          ports:
+            - containerPort: 8080  # Expose your application on port 5000

@@ -8,17 +8,17 @@
 ```sh
 # canberra: TERMINAL TAB
 export KUBECONFIG=$HOME/.kube/config-canberra
-oc login --token=sha256~KD3QpUkY-bcngS4yldRq31hsW9c6O-jw9ErhpfLlTJs --server=https://api.cluster-pmvqm.sandbox432.opentlc.com:6443
+oc login  --server=https://api.cluster-pmvqm.sandbox432.opentlc.com:6443
 oc get -o jsonpath='{.status.infrastructureName}' infrastructure cluster
 
 # sydney: TERMINAL TAB
 export KUBECONFIG=$HOME/.kube/config-sydney
-oc login --token=sha256~Pq8vP_lMbcDI7suI0IOLlb0a4rHug3L7LPQdDuj62pY --server=https://api.cluster-s5cqt.dynamic.redhatworkshops.io:6443
+oc login --server=https://api.cluster-s5cqt.dynamic.redhatworkshops.io:6443
 oc get -o jsonpath='{.status.infrastructureName}' infrastructure cluster
 
 # melbourne: TERMINAL TAB
 export KUBECONFIG=$HOME/.kube/config-melbourne
-oc login --token=sha256~Pq8vP_lMbcDI7suI0IOLlb0a4rHug3L7LPQdDuj62pY --server=https://api.cluster-s5cqt.dynamic.redhatworkshops.io:6443
+oc login  --server=https://api.cluster-s5cqt.dynamic.redhatworkshops.io:6443
 oc get -o jsonpath='{.status.infrastructureName}' infrastructure cluster
 ```
 

@@ -20,3 +20,7 @@ git push -u github main
 # Dont write repository in quay url
 WRONG: https://quay.io/repository/arslankhanali/skupper-backend
 RIGHT: https://quay.io/arslankhanali/skupper-backend
+
+# Same robot Account can be shared with multiple repositories in Quay
+
+#

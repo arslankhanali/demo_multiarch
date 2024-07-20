@@ -19,5 +19,5 @@ podman restart backend
 
 # Push to quay 
 # Make sure repositories are public before pushing
-podman push backend quay.io/arslankhanali/skupper-backend
-podman push frontend quay.io/arslankhanali/skupper-frontend
+podman push backend quay.io/arslankhanali/skupper-backend:latest-x86
+podman push frontend quay.io/arslankhanali/skupper-frontend:latest-x86

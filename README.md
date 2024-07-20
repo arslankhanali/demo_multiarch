@@ -2,8 +2,6 @@
 ### Introduction
 The CI pipeline gets triggered whenever a change is made to the pipeline itself and/or application code. This pipeline trigger will cause the OpenShift cluster to build the HW architecture-specific container image(s)—x86 image and ppc64le image in our case—and push them to the container registry (Quay.io in this case). Eventually, the pipeline will combine the different (HW-specific) container images and create a multi-architecture (single) image which can be used across x86 and ppc64le OpenShift clusters. This saves the developers and operations team from dealing with multiple container images for an application.
 
-Detailed Instructions [here](https://developer.ibm.com/tutorials/build-multi-architecture-x86-and-power-container-images-using-gitlab/#step-7-a-peek-at-the-gitlab-ci-pipeline-yaml-file-10) 
-
 Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU architectures.
 ![alt text](images/0-image-hld.png)
 
@@ -13,8 +11,15 @@ Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU a
 3. gitlab account
 
 ## Parts of Demo
-1. PART1 - Setup GitLab Runner on clusters
-2. PART2 - Provide Gitlab with Quay variables.
+1. CI Pipeline
+   1. PART 1 - Setup GitLab Runner on clusters
+   2. PART 2 - Provide Gitlab with Quay variables.
+2. Deploy Application
+   1. Deploy frotend on cluster1
+   2. Deploy backend on cluster2
+3. Connect both namespaces with skupper
+   1. Verify that app is running
+4. CONGRATULATIONS - You have done it
 
 # Login to 2 Openshift clusters in terminal. Set a tab for each cluster
 ```sh
@@ -28,9 +33,11 @@ export KUBECONFIG=$HOME/.kube/config-sydney
 oc login --server=https://api.cluster-s5cqt.dynamic.redhatworkshops.io:6443
 oc get -o jsonpath='{.status.infrastructureName}' infrastructure cluster
 ```
+Use `export KUBECONFIG=$HOME/.kube/config-sydney` in any new terminal tab to make sure it connects to this particular cluster.
+
 ![alt text](images/0-image-terminals.png)
 
-# PART1 - Setup GitLab Runner on clusters
+# PART 1 - Setup GitLab Runner on clusters
 ### Install GitLab operator - [Same on Both cluster]
 Most of these steps will be similar on any OpenShift clusters. Except `create Runner` part where you will have to provide the correct tag.  
 ```sh
@@ -176,7 +183,7 @@ EOF
 ### Verify that Runner are running on both OCP clusters
 ![alt text](images/1.1-image-runnersready.png)
 
-# PART2 - Provide Gitlab with Quay variables.
+# PART 2 - Provide Gitlab with Quay variables.
 ### Create Robot Account on Quay
 This is needed so gitlab pipeline can push images to Quay.  
 Create 2 PUBLIC repositories.
@@ -196,40 +203,87 @@ Create 2 variables
 
 > APIs can be used to create these variables as well.
 ### Run pipeline
+Push changes to git repo and CI pipeline will start Automatically.  
+New pods with the name of 'runner*' will pop up in gitlab project in both OCP clusters.  
+Check the status of CI pipeline.
 ![alt text](images/5-image-runpipeline.png)
-
-### Verify
+You can see the logs by clicking on each Job  
 ![alt text](images/6-image-jobs.png)
-
+### Verify
 ![alt text](images/7-image-images.png)
 
-### Deploy Application
+# Deploy Application
+## Scenario 1: On 2 different OCP clusters
+### Deploy on cluster1
 ``` sh
-# Deploy using CLI
-oc project demo
-oc new-app quay.io/arslankhanali/demo-multiarch:tag-demo-multiarch-multiarch
-oc create route edge demo-multiarch --service=demo-multiarch --port=5000
-echo "https://$(oc get route demo-multiarch -o jsonpath='{.spec.host}')" 
+# NAMESPACE CANBERRA
+# Deploy frontend in namespace canberra
+oc new-project canberra
+oc new-app --name=frontend -l app=hello quay.io/arslankhanali/skupper-frontend:latest
+oc create route edge frontend --service=frontend --port=8080
+echo "https://$(oc get route frontend -o jsonpath='{.spec.host}')" 
 
-# OR
-# Deploy using GitOps 
-oc apply -f manifests  
+skupper init --enable-console --enable-flow-collector
+skupper token create ~/canberra-sydney.token
+skupper token create ~/canberra-melbourne.token
+
+echo "https://$(oc get route skupper -o jsonpath='{.spec.host}')"
+oc get secret skupper-console-users -n canberra -o jsonpath='{.data.admin}' | base64 --decode # user is admin
+# NAMESPACE SYDNEY
+# Open new terminal tab - make sure its still cluster1
+# Deploy backend in namespace sydney
+oc new-project sydney
+oc new-app --name=backend -l app=hello quay.io/arslankhanali/skupper-backend:latest
+
+skupper init --ingress none
+skupper link create ~/canberra-sydney.token
+skupper expose deployment/backend --port 8080
+ 
 ```
 
+### Deploy on cluster2
+``` sh
+# NAMESPACE MELBOURNE
+# Deploy backend in namespace melbourne
+oc new-project melbourne
+oc new-app --name=backend -l app=hello quay.io/arslankhanali/skupper-backend:latest
+ 
+skupper init --ingress none
+skupper link create ~/canberra-melbourne.token
+skupper expose deployment/backend --port 8080
+
+```
+## Scenario 2: On same OCP cluster
+```sh
+# NAMESPACE east
+# Deploy frontend in namespace east
+oc new-project east
+oc new-app --name=frontend -l app=hello quay.io/arslankhanali/skupper-frontend:latest
+oc create route edge frontend --service=frontend --port=8080
+echo "https://$(oc get route frontend -o jsonpath='{.spec.host}')" 
+
+skupper init --enable-console --enable-flow-collector
+skupper token create ~/east-west.token
+
+oc get secret skupper-console-users -n east -o jsonpath='{.data.admin}' | base64 --decode # user is admin
+
+# NAMESPACE west
+# Open new terminal tab - make sure its still cluster1
+# Deploy backend in namespace west
+oc new-project west
+oc new-app --name=backend -l app=hello quay.io/arslankhanali/skupper-backend:latest
+
+skupper init --ingress none
+skupper link create ~/east-west.token
+skupper expose deployment/backend --port 8080
+ 
+```
 ### Delete application
 ```sh
-oc delete all --selector app=demo-multiarch
+# skupper 
+skupper delete
+# App
+oc delete all --selector app=hello
 ```
 # Thank You
 The End
-
-
-oc create deployment frontend --image quay.io/arslankhanali/skupper-frontend:latest
-oc expose deployment/frontend --port 8080 --type LoadBalancer
-oc create route edge frontend --service=frontend --port=8080 
-
-echo "https://$(oc get route frontend -o jsonpath='{.spec.host}')"
-oc get secret skupper-console-users -n canberra -o jsonpath='{.data.admin}' | base64 --decode # user is admin
-
-oc create deployment backend --image quay.io/arslankhanali/skupper-backend:latest
-oc expose deployment/backend --port 8080
