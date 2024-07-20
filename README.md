@@ -7,7 +7,8 @@ Using Gitlab-CI pipeline across multiple OpenShift clusters with different CPU a
 
 ### Some Notes about this repo:
 Before we start, here are some fyi only
-  - **Continuous Integration**: This Readme will focus on GITLAB-RUNNERS for CI. But there is also working code for TEKTON-PIPELINES and [GITHUB-ACTIONS](https://github.com/arslankhanali/demo_multiarch) in this repository. GITHUB-ACTIONS workflow builds image for 6 (arm, arm64, 386, amd64, ppc64le, s390x) different CPU architectures each time the code is pushed to github. All the resultant images are in 2 repositories quay.io/arslankhanali/skupper-frontend & quay.io/arslankhanali/skupper-backend.
+  - **Continuous Integration**: This Readme will focus on GITLAB-RUNNERS for CI. But there is also working code for TEKTON-PIPELINES and [GITHUB-ACTIONS](https://github.com/arslankhanali/demo_multiarch) in this repository. GITHUB-ACTIONS workflow builds image for 6 (arm, arm64, 386, amd64, ppc64le, s390x) different CPU architectures each time the code is pushed to github. ![alt text](images/7.2-image.png)
+  - All the resultant images are in 2 repositories quay.io/arslankhanali/skupper-frontend & quay.io/arslankhanali/skupper-backend.
   - **argo**: folder has the code to deploy application with GitOps
   - **Manifests**: You can also use manifests to deploy application
 
@@ -225,7 +226,7 @@ Check the status of CI pipeline.
 You can see the logs by clicking on each Job  
 ![alt text](images/6-image-jobs.png)
 ### Verify
-![alt text](images/7-image-images.png)
+demo_multiarch/images/7-image-quay-gl.png
 
 # Deploy Application
 ## Scenario 1: On 2 different OCP clusters
