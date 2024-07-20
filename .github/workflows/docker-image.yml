@@ -40,28 +40,16 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build and push backend image
-        working-directory: skupper-app/backend
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Containerfile
-          push: true
-          tags: quay.io/arslankhanali/skupper-backend:latest-gh
-          platforms: linux/amd64,linux/arm64,linux/ppc64le
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+        run: |
+          cd skupper-app/backend
+          docker buildx build --push --platform linux/amd64,linux/arm64,linux/ppc64le \
+            --tag quay.io/arslankhanali/skupper-backend:latest-gh .
 
       - name: Build and push frontend image
-        working-directory: skupper-app/frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Containerfile
-          push: true
-          tags: quay.io/arslankhanali/skupper-frontend:latest-gh
-          platforms: linux/amd64,linux/arm64,linux/ppc64le
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+        run: |
+          cd skupper-app/frontend
+          docker buildx build --push --platform linux/amd64,linux/arm64,linux/ppc64le \
+            --tag quay.io/arslankhanali/skupper-frontend:latest-gh .
 
       - name: Logout from Quay.io
         run: docker logout quay.io
