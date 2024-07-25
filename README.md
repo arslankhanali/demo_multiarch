@@ -307,17 +307,21 @@ ab -n 100 -c 10 -p skupper-app/payload.json -T application/json "https://$(oc ge
 oc new-project west
 oc new-app --name=backend -l app=hello quay.io/arslankhanali/skupper-backend:latest
 
+oc scale deployment backend --replicas=3
+
 skupper init --ingress none
 skupper link create ~/east-west.token
 skupper expose deployment/backend --port 8080
  
 ```
-### 6. Delete application
+### 6. Delete
 ```sh
 # skupper 
 skupper delete
+skupper delete link link1
 
 # App
+oc get pods -l app=hello
 oc delete all --selector app=hello
 ```
 # Thank You
