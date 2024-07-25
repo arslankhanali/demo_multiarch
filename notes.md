@@ -46,3 +46,8 @@ FROM registry.access.redhat.com/ubi9/python-312
 ```
 # arch in podman build
 podman build -t demo-multiarch-arm64 -f Containerfile . --arch=amd64  
+
+# Red Hat Service Interconnect
+Works on:
+1. x86
+2. arm

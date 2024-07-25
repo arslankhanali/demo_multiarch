@@ -61,8 +61,6 @@ cat << EOF | oc apply -f-
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  labels:
-    operators.coreos.com/gitlab-runner-operator.openshift-operators: ""
   name: gitlab-runner-operator
   namespace: openshift-operators
 spec:
@@ -130,6 +128,7 @@ or
 or  
 `tags: openshift, arm`  
 
+> x86
 ``` sh
 # For x86 OCP Cluster
 cat << EOF | oc apply -f-
@@ -145,7 +144,9 @@ spec:
   tags: openshift, x86
   token: gitlab-runner-secret
 EOF
-
+```
+> ppc64le
+```sh
 # For PPC OCP Cluster
 cat << EOF | oc apply -f-
 apiVersion: apps.gitlab.com/v1beta2
