@@ -57,6 +57,9 @@ Use `export KUBECONFIG=$HOME/.kube/config-sydney` in any new terminal tab to mak
 ### 2a.Install GitLab operator - [Same on Both cluster]
 Most of these steps will be similar on any OpenShift clusters. Except `create Runner` part where you will have to provide the correct tag.  
 ```sh
+# Run v1.26.2
+# Run v1.27 had some issues
+All Namespaces
 cat << EOF | oc apply -f-
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
