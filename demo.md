@@ -87,6 +87,11 @@ skupper init --ingress none
 skupper link create ~/east-west.token
 skupper expose deployment/backend --port 8080
 ```
+Before
+![alt text](images/35-image-before.png)
+![alt text](images/38-image-services.png)
+After
+![alt text](images/36-image-after.png)
 ### 6. Delete
 ```sh
 # skupper 
