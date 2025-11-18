@@ -32,12 +32,15 @@ oc get nodes -o wide --context=arm
 cd ~/Codes/demo.redhat.com/demo_multiarch
 ls # Show App Code
 date >> date.txt       
-git commit -am "Run demo for Mark Grayson"
+git commit -am "Run demo arch-cop"
 git push origin main 
+
 # Show Pipeline
+https://github.com/arslankhanali/demo_multiarch/blob/main/.github/workflows/docker-image.yml
+# Show Git hub Actions
 https://github.com/arslankhanali/demo_multiarch/actions/runs/
-# Show Jobs
 # Show Quay - image repository
+https://quay.io/repository/arslankhanali/skupper-frontend?tab=tags
 ```
 ![alt text](images/30-image-Pipeline.png)
 ![alt text](images/31-image-Jobs.png)
