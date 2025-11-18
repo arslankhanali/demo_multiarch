@@ -19,14 +19,24 @@
 
 FROM python:alpine AS build
 
-RUN pip install --no-cache-dir starlette uvicorn
+RUN pip install --no-cache-dir starlette uvicorn && \
+    python -c "import site; print(site.getsitepackages()[0])" > /tmp/python_site_packages.txt && \
+    SITE_PACKAGES=$(cat /tmp/python_site_packages.txt) && \
+    cp -r $SITE_PACKAGES /tmp/site-packages
 
 FROM python:alpine AS run
 
 RUN adduser -S fritz -G root
-USER fritz
 
-COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+# Copy site-packages dynamically based on Python version
+COPY --from=build /tmp/python_site_packages.txt /tmp/
+COPY --from=build /tmp/site-packages /tmp/site-packages-source
+RUN PYTHON_SITE_PACKAGES=$(cat /tmp/python_site_packages.txt) && \
+    mkdir -p $(dirname $PYTHON_SITE_PACKAGES) && \
+    cp -r /tmp/site-packages-source/* $PYTHON_SITE_PACKAGES/ && \
+    rm -rf /tmp/site-packages-source /tmp/python_site_packages.txt
+
+USER fritz
 COPY --chown=fritz:root python /home/fritz/python
 
 EXPOSE 8080
