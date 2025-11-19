@@ -7,20 +7,21 @@ https://github.com/arslankhanali/demo_multiarch/settings/secrets/actions/QUAY_PA
 
 ### Setup Tabs  - '86' and 'arm'
 ```sh
-oc login --token=sha256~yLWMeIWs7xJV73Py5rs8vGmlXaUo5Hp_13o1NJadwls --server=https://api.cluster-2bkw8.2bkw8.sandbox1789.opentlc.com:6443
+# NOT ACTUAL TOKENS
+oc login --token=sha256~yLWMeIq --server=https://api.cluster-2bkw8.2bkw8.sandbox1789.opentlc.com:6443
 
-oc login --token=sha256~769Sw4QDb2afvntkncAW0jIURAiKHTX6m3uweUfCAhc --server=https://api.cluster-z94pq.z94pq.sandbox1166.opentlc.com:6443
+# NOT ACTUAL TOKENS
+oc login --token=sha256~7ifCAhw --server=https://api.cluster-z94pq.z94pq.sandbox1166.opentlc.com:6443
 
 # get contxt
 oc config get-contexts
 
-# Rename the long context string to "dev"
+# Rename the long context string to "x86" and "arm"
 oc config rename-context default/api-cluster-2bkw8-2bkw8-sandbox1789-opentlc-com:6443/admin x86
 oc config rename-context default/api-cluster-z94pq-z94pq-sandbox1166-opentlc-com:6443/kube:admin arm
 
-# Show clusters
+# Useful aliases
 alias oc-which='oc config get-contexts'
-
 alias oc-x86='oc config use-context x86'
 alias oc-arm='oc config use-context arm'
 
@@ -32,6 +33,7 @@ oc get nodes -o wide --context=arm
 ``` sh
 cd ~/Codes/demo.redhat.com/demo_multiarch
 ls # Show App Code
+
 date >> date.txt       
 git commit -am "Run demo arch-cop"
 git push origin main 
@@ -104,15 +106,15 @@ oc describe service backend  # Check endpoints - should show pods from both x86 
 # ----------------
 oc-x86
 oc delete deployment backend -n demo
+oc-x86
 oc new-app --name=backend -l app=hello quay.io/arslankhanali/skupper-backend:gh -n demo
 
 ```
 
-### 5. Delete
+### 5. Clean Up
 ```sh
 # skupper 
 skupper delete
-skupper delete link link
 
 # x86
 oc-x86
