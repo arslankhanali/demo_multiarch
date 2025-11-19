@@ -1,11 +1,18 @@
 # Demo Run
-## Setup
+## Intro
+1. Useing Github Actions to build Containers.
+2. Show hybrid App
+3. Use Skupper to connect 'demo' namespaces and expose backend services.
 
+# Pre-Req
 ## Github secrets for quay should be in already.
 https://github.com/arslankhanali/demo_multiarch/settings/secrets/actions/QUAY_PASSWORD
 https://github.com/arslankhanali/demo_multiarch/settings/secrets/actions/QUAY_PASSWORD
 
-### Setup Tabs  - '86' and 'arm'
+# Screen Setup
+![alt text](images/demo-screen-setup.jpg)
+
+### Setup  - '86' and 'arm'
 ```sh
 # NOT ACTUAL TOKENS
 oc login --token=sha256~yLWMeIq --server=https://api.cluster-2bkw8.2bkw8.sandbox1789.opentlc.com:6443
